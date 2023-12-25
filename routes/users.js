@@ -3,10 +3,7 @@ const bcrypt = require("bcrypt");
 const {UserModel,userValid,loginValid} = require("../models/userModel")
 const router = express.Router();
 
-// router.get("/",(req,res) => {
-//     res.json({msg:"users work perfect 3"})
-// })
-
+//get all users
 router.get("/",async(req,res) => {
   let perPage = Math.min(req.query.perPage,20) || 99;
   let page = req.query.page || 1;
@@ -28,7 +25,7 @@ router.get("/",async(req,res) => {
 })
 
 
-
+//sign-up
 router.post("/", async(req,res) => {
 
   let valdiateBody = userValid(req.body);
@@ -59,6 +56,8 @@ router.post("/", async(req,res) => {
   
   })
 
+
+  //log-in
   router.post("/login", async(req,res) => {
     let valdiateBody = loginValid(req.body);
     if(valdiateBody.error){
@@ -87,7 +86,7 @@ router.post("/", async(req,res) => {
     }
   })
 
-
+//delete user
 router.delete("/:delId", async(req,res) => {
 
     let delId = req.params.delId;
