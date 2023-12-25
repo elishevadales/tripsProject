@@ -1,35 +1,41 @@
 const mongoose = require("mongoose");
 const Joi = require("joi")
+const jwt = require("jsonwebtoken");
+const { config } = require("../config/secret")
 
-// סכמה כיצד הקולקשן/טבלה של המוצרים נראת והסוג של כל מאפיין
 let userSchema = new mongoose.Schema({
-  name:String,
-  email:String,
-  password:String,
-  date_created:{
-      type : Date , default : Date.now()
+  name: String,
+  email: String,
+  password: String,
+  gender: String,
+  date_created: {
+    type: Date,
+    default: () => Date.now() + (3 * 60 * 60 * 1000)
+  },
+  age: Number,
+  district_address: String,
+  about: String,
+  profile_image: {
+    type: String,
+    default:"https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+  },
+  background_image: String,
+  nick_name: {
+    type: String,
+    default: function () {
+      // 'this' refers to the document being created
+      return this.name ? `${this.name.replace(/\s/g, '_')}` : null;
+    }
+  },
+  active: {
+    type: Boolean, default: true
+  },
+  role: {
+    type: String, default: "user"
   }
+
 })
 
-// מייצר ומייצא את המודל שבנוי משם הקולקשן והסכמה שלו
-// קולקשן חייב להסתיים באס אחר יהיו באגים
-exports.UserModel = mongoose.model("users",userSchema);
-// מודל חייב להתחיל באות גדולה
+exports.UserModel = mongoose.model("users", userSchema);
 
-exports.userValid = (_bodyValid) =>{
-  let joiSchema = Joi.object({
-      name: Joi.string().min(2).max(50).required(),
-      // email() -> בודק שגם האימייל לפי תבנית מייל
-      email: Joi.string().min(2).max(100).email().required(),
-      password: Joi.string().min(6).max(50).required(),
-  })
-  return joiSchema.validate(_bodyValid);
-}
-// התחברות
-exports.loginValid = (_bodyValid) =>{
-  let joiSchema = Joi.object({
-      email: Joi.string().min(2).max(100).email().required(),
-      password: Joi.string().min(6).max(50).required(),
-  })
-  return joiSchema.validate(_bodyValid);
-}
+
