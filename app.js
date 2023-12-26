@@ -1,4 +1,4 @@
-//צריך רק לעשות npm i
+
 const express = require('express');
 const path = require('path');
 const http = require('http');
@@ -14,7 +14,6 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname,"public")))
 
 routesInit(app);
-
 
 const server = http.createServer(app);
 

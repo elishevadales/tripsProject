@@ -8,7 +8,7 @@ exports.userValid = (_bodyValid) => {
     name: Joi.string().min(2).max(50).required(),
     email: Joi.string().min(2).max(100).email().required(),
     password: Joi.string().min(6).max(50).required(),
-    gender: Joi.string().valid('male', 'female', 'other').required(),
+    gender: Joi.string().valid('male', 'female', 'other'),
     age: Joi.number().min(1).max(120),
     district_address: Joi.string().min(2).max(100),
     about: Joi.string().min(2).max(1000),

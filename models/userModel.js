@@ -17,7 +17,7 @@ let userSchema = new mongoose.Schema({
   about: String,
   profile_image: {
     type: String,
-    default:"https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+    default: "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
   },
   background_image: String,
   nick_name: {
@@ -32,7 +32,25 @@ let userSchema = new mongoose.Schema({
   },
   role: {
     type: String, default: "user"
-  }
+  },
+  events_i_liked: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events"
+    }
+  ],
+  my_join_events: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events"
+    }
+  ],
+  my_created_events: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "events"
+    }
+  ]
 
 })
 
