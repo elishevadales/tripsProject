@@ -5,7 +5,7 @@ const priceSchema = new mongoose.Schema({
     adult: Number,
     studentOrSoldier: Number,
     child: Number,
-    free: Boolean, // Boolean to indicate if it's free or not
+    free: Boolean, // Boolean to indicate if it's free or not  test 
 
 });
 
