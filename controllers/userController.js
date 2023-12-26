@@ -1,7 +1,7 @@
 const { UserModel } = require("../models/userModel");
 const { createToken } = require("../auth/token");
 const bcrypt = require("bcrypt");
-const {config} = require("../config/secret")
+const { config } = require("../config/secret")
 const { userValid, loginValid } = require("../validations/userValidations")
 
 
@@ -123,9 +123,37 @@ exports.userController = {
 
     countUsers: async (req, res) => {
         try {
-            // return the number of users
-            let count = await UserModel.countDocuments({})
-            res.json({ count })
+            // Count the number of users where active is true
+            let count = await UserModel.countDocuments({ active: true });
+            res.json({ count });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: "err", err });
+        }
+    },
+
+    changeRole: async (req, res) => {
+        if (!req.body.role) {
+            return res.status(400).json({ msg: "Need to send role in body" });
+        }
+
+        try {
+            let userID = req.params.userID
+            // cannot change admin to user
+            if (userID == config.admin_token) {
+                return res.status(401).json({ msg: "You cant change superadmin role" });
+
+            }
+            if (req.body.role != "admin" && req.body.role != "user") {
+                return res.status(401).json({ msg: "role can be only user/admin" });
+
+            }
+            if (userID == req.tokenData._id) {
+                return res.status(401).json({ msg: "You cant change your own role" });
+            }
+
+            let data = await UserModel.updateOne({ _id: userID }, { role: req.body.role })
+            res.json(data);
         }
         catch (err) {
             console.log(err)
@@ -133,59 +161,30 @@ exports.userController = {
         }
     },
 
-    changeRole: async (req, res) => {
-        if (!req.body.role) {
-          return res.status(400).json({ msg: "Need to send role in body" });
-        }
-    
-        try {
-          let userID = req.params.userID
-          // cannot change admin to user
-          if (userID == config.admin_token) {
-            return res.status(401).json({ msg: "You cant change superadmin role" });
-    
-          }
-          if (req.body.role != "admin" && req.body.role != "user") {
-            return res.status(401).json({ msg: "role can be only user/admin" });
-    
-          }
-          if(userID == req.tokenData._id){
-            return res.status(401).json({ msg: "You cant change your own role" });
-          }
-    
-          let data = await UserModel.updateOne({ _id: userID }, { role: req.body.role })
-          res.json(data);
-        }
-        catch (err) {
-          console.log(err)
-          res.status(500).json({ msg: "err", err })
-        }
-      },
-    
-      
-      changeActive: async (req, res) => {
+
+    changeActive: async (req, res) => {
         if (!req.body.active && req.body.active != false) {
-          return res.status(400).json({ msg: "Need to send active in body" });
+            return res.status(400).json({ msg: "Need to send active in body" });
         }
-    
+
         try {
-          let userID = req.params.userID
-          // admin cannot return to false
-          if (userID == config.admin_token) {
-            return res.status(401).json({ msg: "You cant block superadmin" });
-    
-          }
-          if(userID == req.tokenData._id){
-            return res.status(401).json({ msg: "You cant change your Active status" });
-          }
-          let data = await UserModel.updateOne({ _id: userID }, { active: req.body.active })
-          res.json(data);
+            let userID = req.params.userID
+            // admin cannot return to false
+            if (userID == config.admin_token) {
+                return res.status(401).json({ msg: "You cant block superadmin" });
+
+            }
+            if (userID == req.tokenData._id) {
+                return res.status(401).json({ msg: "You cant change your Active status" });
+            }
+            let data = await UserModel.updateOne({ _id: userID }, { active: req.body.active })
+            res.json(data);
         }
         catch (err) {
-          console.log(err)
-          res.status(500).json({ msg: "err", err })
+            console.log(err)
+            res.status(500).json({ msg: "err", err })
         }
-      },
+    },
 
 
     deleteUser: async (req, res) => {

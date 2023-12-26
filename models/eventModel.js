@@ -13,14 +13,34 @@ let eventSchema = new mongoose.Schema({
 
     event_name: String,
     category: String,
+    sub_category: String,
     parking: String,
-    accessibility: Boolean,
-    details: String,
-    date_and_time: Date,
+    district: String,
+    date_created: {
+        type: Date,
+        default: Date.now,
+    },
+    accessibility: {
+        type: Boolean,
+        default: false
+    },
+    detals: String,
+    date_and_time: {
+        type: Date,
+        validate: {
+            validator: function (value) {
+                return !this.date_created || value > this.date_created;
+            },
+            message: "date_and_time must be after date_created",
+        },
+        required: true,
+    },
     during: String,
     open_event: Boolean,
     required_equipment: String,
-    active: Boolean,
+    active: {
+        type: Boolean, default: true
+    },
     price: {
         type: priceSchema,
         default: {
@@ -30,10 +50,10 @@ let eventSchema = new mongoose.Schema({
             free: true,
         },
     },
-    
+
     images: [
         {
-            type: String, 
+            type: String,
         },
     ],
 

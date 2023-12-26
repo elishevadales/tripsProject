@@ -13,7 +13,7 @@ router.get("/myInfo", auth, userController.myInfo)
 router.get("/userInfo/:userId", auth, userController.userInfo)
 //get all users
 router.get("/usersList",auth, userController.usersList)
-// returns the number of users
+// returns the number of active users
 router.get("/count", auth, userController.countUsers)
 //sign-up
 router.post("/", userController.signUp)
