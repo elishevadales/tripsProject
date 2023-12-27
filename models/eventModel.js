@@ -24,7 +24,8 @@ let eventSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    detals: String,
+    place_info: String,
+    trip_details: String,
     date_and_time: {
         type: Date,
         validate: {
@@ -62,23 +63,26 @@ let eventSchema = new mongoose.Schema({
         ref: "users"
     },
 
-    likes_list: [
+    like_list: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            ref: "users",
+            default: []
         }
     ],
 
     join_requests: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            ref: "users",
+            default: []
         }
     ],
     participants: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            ref: "users",
+            default: []
         }
     ]
 
