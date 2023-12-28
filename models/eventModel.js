@@ -1,6 +1,18 @@
 const mongoose = require("mongoose");
 const { config } = require("../config/secret")
 
+const participantsSchema = new mongoose.Schema({
+    user_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
+    },
+    reank:  {
+        type: Number,
+        default: 0
+    },
+});
+
+
 const priceSchema = new mongoose.Schema({
     adult: Number,
     studentOrSoldier: Number,
@@ -80,9 +92,8 @@ let eventSchema = new mongoose.Schema({
     ],
     participants: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "users",
-            default: []
+            type: participantsSchema,
+
         }
     ]
 

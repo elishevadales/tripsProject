@@ -24,7 +24,10 @@ exports.eventValid = (_bodyValid) => {
     open_event: Joi.boolean().required(),
     required_equipment: Joi.string().min(2).max(300).default("none"),
     active: Joi.boolean().default(true),
-
+    participants: Joi.array().items(Joi.object({
+      user_id: Joi.string().required(), // Adjust the type based on your needs
+      rank: Joi.number().integer().min(0).max(5).default(0),
+    })),
   })
   return joiSchema.validate(_bodyValid);
 }

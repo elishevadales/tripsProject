@@ -70,6 +70,8 @@ router.patch("/addParticipant/:eventId", auth, eventController.addParticipant)
 // Remove participant
 router.patch("/removeParticipant/:eventId", auth, eventController.removeParticipant)
 
+// Rank
+router.patch("/rank/:eventId", auth, eventController.rank)
 
 // Edit an event
 router.put("/:eventId",auth, eventController.editEvent)

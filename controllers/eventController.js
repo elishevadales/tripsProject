@@ -3,6 +3,7 @@ const { config } = require("../config/secret")
 const { EventModel } = require("../models/eventModel");
 const { UserModel } = require("../models/userModel");
 const { eventValid } = require("../validations/eventValidations")
+const mongoose = require("mongoose");
 
 exports.eventController = {
     routGet: (req, res) => {
@@ -443,7 +444,7 @@ exports.eventController = {
         }
     },
 
-    
+
     removeJoinRequest: async (req, res) => {
         try {
             let eventId = req.params.eventId
@@ -473,7 +474,7 @@ exports.eventController = {
 
     addParticipant: async (req, res) => {
         try {
-            let eventId = req.params.eventId
+            let eventId = req.params.eventId;
             let userId = req.tokenData._id;
 
             const event = await EventModel.findById(eventId);
@@ -482,25 +483,37 @@ exports.eventController = {
                 return res.status(404).json({ msg: 'Event not found' });
             }
 
-            const participants = event.participants.includes(userId);
+            const participants = event.participants.some(participant => participant.user_id.toString() === userId);
 
             if (participants) {
                 return res.status(400).json({ msg: 'User is already a participant' });
             }
 
-            event.participants.push(userId);
+            const newParticipant = {
+                user_id: userId,
+                rank: 0,
+            };
+
+            event.participants.push(newParticipant);
             await event.save();
+
+            await UserModel.findByIdAndUpdate(
+                userId,
+                { $push: { my_join_events: eventId } },
+                { new: true }
+            );
+
             res.json({ msg: 'User added as a participant successfully' });
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).json({ msg: "err", err })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: 'err', err });
         }
     },
 
+
     removeParticipant: async (req, res) => {
         try {
-            let eventId = req.params.eventId
+            let eventId = req.params.eventId;
             let userId = req.tokenData._id;
 
             const event = await EventModel.findById(eventId);
@@ -509,22 +522,55 @@ exports.eventController = {
                 return res.status(404).json({ msg: 'Event not found' });
             }
 
-            const participants = event.participants.includes(userId);
+            const participantIndex = event.participants.findIndex(participant => participant.user_id.toString() === userId);
 
-            if (!participants) {
+            if (participantIndex === -1) {
                 return res.status(400).json({ msg: 'User is not a participant' });
             }
 
-            event.participants = event.participants.filter(id => id.toString() !== userId);
+            event.participants.splice(participantIndex, 1);
+
             await event.save();
-            res.json({ msg: 'Participant removed successfully' })
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).json({ msg: "err", err })
+            res.json({ msg: 'Participant removed successfully' });
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: 'err', err });
         }
     },
 
+
+    rank: async (req, res) => {
+        try {
+            const eventId = req.params.eventId;
+            const userId = req.tokenData._id;
+            const newRank = req.body.newRank;
+    
+            if (newRank < 0 || newRank > 5) {
+                return res.status(400).json({ msg: 'Invalid rank value' });
+            }
+    
+            const updatedEvent = await EventModel.findOneAndUpdate(
+                { _id: eventId, 'participants.user_id': userId },
+                { $set: { 'participants.$[i].reank': newRank } },
+                {
+                    arrayFilters: [{ 'i.user_id': userId }],
+                    new: true
+                }
+
+            );
+    
+            if (!updatedEvent) {
+                return res.status(404).json({ msg: 'Event not found or user not a participant' });
+            }
+    
+            res.json({ msg: 'User rank updated in the event successfully', event: updatedEvent });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: 'Internal server error', err });
+        }
+    },
+    
+    
     editEvent: async (req, res) => {
         const validBody = eventValid(req.body);
         if (validBody.error) {
@@ -541,6 +587,12 @@ exports.eventController = {
             const updatedEvent = await EventModel.findByIdAndUpdate(
                 eventId,
                 { $set: req.body },
+                { new: true }
+            );
+
+            await UserModel.findByIdAndUpdate(
+                userId,
+                { $pull: { my_join_events: eventId } },
                 { new: true }
             );
 
