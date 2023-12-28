@@ -24,6 +24,6 @@ router.patch("/changeRole/:userID", authAdmin, userController.changeRole);
 //change active to true/false
 router.patch("/changeActive/:userID", authAdmin, userController.changeActive)
 //delete user
-router.delete("/:delId", userController.deleteUser)
+router.delete("/:delId",authAdmin, userController.deleteUser)
 
 module.exports = router;
