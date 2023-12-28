@@ -97,6 +97,7 @@ exports.userController = {
         }
     },
 
+
     myInfo: async (req, res) => {
         try {
             let userInfo = await UserModel.findOne({ _id: req.tokenData._id }, { password: 0 });
@@ -107,7 +108,6 @@ exports.userController = {
             res.status(500).json({ msg: "err", err })
         }
     },
-
     userInfo: async (req, res) => {
         try {
             let userId = req.params.userId;
@@ -188,10 +188,32 @@ exports.userController = {
 
 
     deleteUser: async (req, res) => {
+        try {
+            let delId = req.params.delId;
 
-        let delId = req.params.delId;
-        let data = await UserModel.deleteOne({ _id: delId });
-        res.json(data);
+            if (delId == config.admin_token) {
+                return res.status(401).json({ msg: "You can't delete superAdmin"});
+
+            }
+            if (req.tokenData._id == delId) {
+                return res.status(401).json({ msg: "You can't delete your own acount" });
+
+            }
+            if (req.tokenData.role == "admin") {
+                return res.status(401).json({ msg: "You can't delete admin" });
+
+            }
+    
+
+            let data = await UserModel.deleteOne({ _id: delId });
+            res.json(data);
+
+        }
+
+        catch (err) {
+            console.log(err)
+            res.status(500).json({ msg: "err 500", err })
+        }
 
     }
 }
