@@ -1,11 +1,23 @@
 const mongoose = require("mongoose");
 const { config } = require("../config/secret")
 
+const participantsSchema = new mongoose.Schema({
+    user_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users"
+    },
+    reank:  {
+        type: Number,
+        default: 0
+    },
+});
+
+
 const priceSchema = new mongoose.Schema({
     adult: Number,
     studentOrSoldier: Number,
     child: Number,
-    free: Boolean, // Boolean to indicate if it's free or not
+    free: Boolean, // Boolean to indicate if it's free or not  test 
 
 });
 
@@ -13,14 +25,35 @@ let eventSchema = new mongoose.Schema({
 
     event_name: String,
     category: String,
+    sub_category: String,
     parking: String,
-    accessibility: Boolean,
-    details: String,
-    date_and_time: Date,
+    district: String,
+    date_created: {
+        type: Date,
+        default: Date.now,
+    },
+    accessibility: {
+        type: Boolean,
+        default: false
+    },
+    place_info: String,
+    trip_details: String,
+    date_and_time: {
+        type: Date,
+        validate: {
+            validator: function (value) {
+                return !this.date_created || value > this.date_created;
+            },
+            message: "date_and_time must be after date_created",
+        },
+        required: true,
+    },
     during: String,
     open_event: Boolean,
     required_equipment: String,
-    active: Boolean,
+    active: {
+        type: Boolean, default: true
+    },
     price: {
         type: priceSchema,
         default: {
@@ -30,10 +63,10 @@ let eventSchema = new mongoose.Schema({
             free: true,
         },
     },
-    
+
     images: [
         {
-            type: String, 
+            type: String,
         },
     ],
 
@@ -42,23 +75,25 @@ let eventSchema = new mongoose.Schema({
         ref: "users"
     },
 
-    likes_list: [
+    like_list: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            ref: "users",
+            default: []
         }
     ],
 
     join_requests: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            ref: "users",
+            default: []
         }
     ],
     participants: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "users"
+            type: participantsSchema,
+
         }
     ]
 

@@ -33,22 +33,25 @@ let userSchema = new mongoose.Schema({
   role: {
     type: String, default: "user"
   },
-  events_i_liked: [
+  favorite: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "events"
+      ref: "events",
+      default: []
     }
   ],
   my_join_events: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "events"
+      ref: "events",
+      default: []
     }
   ],
   my_created_events: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "events"
+      ref: "events",
+      default: []
     }
   ]
 
