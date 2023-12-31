@@ -191,6 +191,7 @@ exports.userController = {
         try {
             let delId = req.params.delId;
 
+            //lll
             if (delId == config.admin_token) {
                 return res.status(401).json({ msg: "You can't delete superAdmin"});
 
