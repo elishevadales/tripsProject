@@ -9,11 +9,11 @@ const reviewSchema = new mongoose.Schema({
         required:true
     },
     comment:String,
-    event:{
+    event_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "events" 
     },
-    user:{
+    user_id:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "users"
     }
