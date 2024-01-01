@@ -11,7 +11,7 @@ exports.eventValid = (_bodyValid) => {
       child: Joi.number().min(0).max(10000),
       free: Joi.boolean(),
     }),
-    images: Joi.array().items(Joi.string().min(2).max(300)),
+    images: Joi.array().items(Joi.string().min(2).max(1000)),
     district: Joi.string().min(2).max(100),
     category: Joi.string().valid('trip', 'attraction'),
     sub_category: Joi.string().min(0).max(100),

@@ -1,50 +1,54 @@
 const express = require("express");
 const router = express.Router();
 const { auth, authAdmin } = require("../middlewares/auth")
-const { eventController } = require("../controllers/eventController");
+const { eventController } = require("../controllers/event/eventController");
+const { getEventController } = require("../controllers/event/getEventController")
+const { searchEventController } = require("../controllers/event/searchEventController")
+const { filterEventController } = require("../controllers/event/filterEventController")
+const { joinRequestController } = require("../controllers/event/joinRequestController")
+const { participantController } = require("../controllers/event/participantController")
 
 
 //shows that the router works
 router.get("/", eventController.routGet)
 
-
-router.get("/getEventById/:eventId", auth, eventController.getEventById)
-
 // Get active event list
-router.get("/activeEventList", eventController.activeEventList)
+router.get("/activeEventList", getEventController.activeEventList)
 
 // Get all the event list
-router.get("/eventList", eventController.eventList)
+router.get("/eventList", getEventController.eventList)
 
 // Get all the free events 
-router.get("/eventFree", eventController.eventFree)
+router.get("/eventFree", getEventController.eventFree)
 
 // Search event by category (active events only)
-router.get("/searchByCategory", eventController.searchByCategory)
+router.get("/searchByCategory", searchEventController.searchByCategory)
 
 // Search event by name
-router.get("/searchByName", eventController.searchByName)
+router.get("/searchByName", searchEventController.searchByName)
 
 // Search events by multiple districts separated by a comma
-router.get("/searchByDistricts", eventController.searchByDistricts)
+router.get("/searchByDistricts", searchEventController.searchByDistricts)
 
 // Search events by multiple sub_category separated by a comma (active events only)
-router.get("/searchBySubCategory", eventController.searchBySubCategory)
+router.get("/searchBySubCategory", searchEventController.searchBySubCategory)
 
 // Search event by min and  max price according to adults price  (maxPrice, minPrice optional) (active events only)
-router.get("/serchByPrice", eventController.serchByPrice)
-
-// Get all the events with free parking place (active events only)
-router.get("/parkingFree", eventController.parkingFree)
-
-// Get all the events with accessibility (active events only)
-router.get("/accessibility", eventController.accessibility)
+router.get("/serchByPrice", searchEventController.serchByPrice)
 
 // Search event by start and  end date (endDate, startDate optional) (active events only)
-router.get("/searchByDates", eventController.searchByDates)
+router.get("/searchByDates", searchEventController.searchByDates)
 
 // Search by free text
-router.get("/search", eventController.search)
+router.get("/search", searchEventController.search)
+
+// Get all the events with free parking place (active events only)
+router.get("/parkingFree", filterEventController.parkingFree)
+
+// Get all the events with accessibility (active events only)
+router.get("/accessibility", filterEventController.accessibility)
+
+
 
 // Post an event
 router.post("/", auth, eventController.addEvent)
@@ -62,34 +66,22 @@ router.patch("/addLike/:eventId", auth, eventController.addLike)
 router.patch("/removeLike/:eventId", auth, eventController.removeLike)
 
 // Add join request
-router.patch("/addJoinRequest/:eventId", auth, eventController.addJoinRequest)
+router.patch("/addJoinRequest/:eventId", auth, joinRequestController.addJoinRequest)
 
 // Remove join request
-router.patch("/removeJoinRequest/:eventId", auth, eventController.removeJoinRequest)
+router.patch("/removeJoinRequest/:eventId", auth, joinRequestController.removeJoinRequest)
 
 // Add participant
-router.patch("/addParticipant/:eventId", auth, eventController.addParticipant)
+router.patch("/addParticipant/:eventId", auth, participantController.addParticipant)
 
 // Remove participant
-router.patch("/removeParticipant/:eventId", auth, eventController.removeParticipant)
-
-// Rank
-router.patch("/rank/:eventId", auth, eventController.rank)
+router.patch("/removeParticipant/:eventId", auth, participantController.removeParticipant)
 
 // Edit an event
 router.put("/:eventId",auth, eventController.editEvent)
 
 // Delete an event
 router.delete("/:eventId",auth, eventController.deleteEvent)
-
-
-
-
-
-
-
-
-
 
 
 
