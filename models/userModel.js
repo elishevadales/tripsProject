@@ -19,7 +19,10 @@ let userSchema = new mongoose.Schema({
     type: String,
     default: "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
   },
-  background_image: String,
+  background_image: {
+    type: String,
+    default: "https://images.pexels.com/photos/2668314/pexels-photo-2668314.jpeg"
+  },
   nick_name: {
     type: String,
     default: function () {

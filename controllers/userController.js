@@ -2,7 +2,7 @@ const { UserModel } = require("../models/userModel");
 const { createToken } = require("../auth/token");
 const bcrypt = require("bcrypt");
 const { config } = require("../config/secret")
-const { userValid, loginValid } = require("../validations/userValidations")
+const { userValid, loginValid, validUpdateUserInfo } = require("../validations/userValidations")
 
 
 exports.userController = {
@@ -74,16 +74,16 @@ exports.userController = {
             let user = await UserModel.findOne({ email: req.body.email })
             if (!user) {
 
-                return res.status(401).json({ msg: "Password or email is worng ,code:1" })
+                return res.status(401).json({ msg: "Password or email is wrong", code: 1 })
             }
 
             let validPassword = await bcrypt.compare(req.body.password, user.password);
             if (!validPassword) {
-                return res.status(401).json({ msg: "Password or email is worng ,code:2" })
+                return res.status(401).json({ msg: "Password or email is wrong", code: 2 })
             }
 
             if (user.active == false) {
-                return res.status(401).json({ msg: "your account is blocked. Please contact the site administrator" });
+                return res.status(401).json({ msg: "your account is blocked. Please contact the site administrator", code:3 });
             }
 
             // create token that includes userID
@@ -93,7 +93,7 @@ exports.userController = {
         catch (err) {
 
             console.log(err)
-            res.status(500).json({ msg: "err", err })
+            res.status(500).json({ msg: "500 err", err, code:500 })
         }
     },
 
@@ -108,6 +108,44 @@ exports.userController = {
             res.status(500).json({ msg: "err", err })
         }
     },
+
+    changeMyInfo: async (req, res) => {
+        let validBody = validInfo(req.body);
+        if (validBody.error) {
+          return res.status(400).json(validBody.error.details);
+        }
+    
+        try {
+          let data = await UserModel.updateOne({ _id: req.tokenData._id },
+            //  { $set: { "name": req.body.name, "img_url": req.body.img_url} }
+            req.body
+          );
+          res.json(data);
+        }
+        catch (err) {
+          console.log(err)
+          res.status(500).json({ msg: "err", err })
+        }
+      },
+
+
+      changeMyInfo: async (req, res) => {
+        let validBody = validUpdateUserInfo(req.body);
+        if (validBody.error) {
+          return res.status(400).json(validBody.error.details);
+        }
+    
+        try {
+          let data = await UserModel.updateOne({ _id: req.tokenData._id },req.body);
+          res.json(data);
+        }
+        catch (err) {
+          console.log(err)
+          res.status(500).json({ msg: "err", err })
+        }
+      },
+
+
     userInfo: async (req, res) => {
         try {
             let userId = req.params.userId;
@@ -198,10 +236,6 @@ exports.userController = {
             }
             if (req.tokenData._id == delId) {
                 return res.status(401).json({ msg: "You can't delete your own acount" });
-
-            }
-            if (req.tokenData.role == "admin") {
-                return res.status(401).json({ msg: "You can't delete admin" });
 
             }
     

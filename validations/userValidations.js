@@ -21,9 +21,6 @@ exports.userValid = (_bodyValid) => {
   return joiSchema.validate(_bodyValid);
 }
 
-
-
-
 // log-in validations
 exports.loginValid = (_bodyValid) => {
   let joiSchema = Joi.object({
@@ -31,4 +28,19 @@ exports.loginValid = (_bodyValid) => {
     password: Joi.string().min(6).max(50).required(),
   })
   return joiSchema.validate(_bodyValid);
+}
+
+//update userInfo validations
+exports.validUpdateUserInfo = (_reqBody) => {
+  let joiSchema = Joi.object({
+    name: Joi.string().min(2).max(50),
+    gender: Joi.string().valid('male', 'female', 'other'),
+    age: Joi.number().min(1).max(120),
+    district_address: Joi.string().min(2).max(100),
+    about: Joi.string().min(2).max(1000),
+    profile_image: Joi.string().min(2).max(1000),
+    background_image: Joi.string().min(2).max(1000),
+    nick_name: Joi.string().min(2).max(50)
+  })
+  return joiSchema.validate(_reqBody);
 }
