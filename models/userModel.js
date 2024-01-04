@@ -17,9 +17,12 @@ let userSchema = new mongoose.Schema({
   about: String,
   profile_image: {
     type: String,
-    default: "https://media.istockphoto.com/id/1495088043/vector/user-profile-icon-avatar-or-person-icon-profile-picture-portrait-symbol-default-portrait.jpg?s=612x612&w=0&k=20&c=dhV2p1JwmloBTOaGAtaA3AW1KSnjsdMt7-U_3EZElZ0="
+    default: "https://firebasestorage.googleapis.com/v0/b/tripsproject-de869.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=c9b52448-9c6e-4d7a-9743-5b5115767781"
   },
-  background_image: String,
+  background_image: {
+    type: String,
+    default: "https://images.pexels.com/photos/2668314/pexels-photo-2668314.jpeg"
+  },
   nick_name: {
     type: String,
     default: function () {

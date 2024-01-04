@@ -23,7 +23,10 @@ router.post("/login", userController.login)
 router.patch("/changeRole/:userID", authAdmin, userController.changeRole);
 //change active to true/false
 router.patch("/changeActive/:userID", authAdmin, userController.changeActive)
+// update user's profile (only name or img_url)
+router.put("/changeMyInfo", auth, userController.changeMyInfo)
 //delete user
-router.delete("/:delId", userController.deleteUser)
+router.delete("/:delId",authAdmin , userController.deleteUser)
 
 module.exports = router;
+//end

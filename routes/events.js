@@ -18,6 +18,9 @@ router.get("/activeEventList", getEventController.activeEventList)
 // Get all the event list
 router.get("/eventList", getEventController.eventList)
 
+//get event by ID
+router.get("/getEventById/:eventId", getEventController.eventById)
+
 // Get all the free events 
 router.get("/eventFree", getEventController.eventFree)
 
