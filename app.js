@@ -8,7 +8,7 @@ const { routesInit } = require("./routes/config_route");
 require("./db/mongoConnect")
 const { initSocket } = require('./utility/socket');
 
-app.use(cors());
+app.use(cors()); 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")))
 
@@ -16,14 +16,16 @@ routesInit(app);
 
 const server = http.createServer(app);
 
-const io = socketIo(server);
+const io = socketIo(server,{
+  cors: {
+    origin: '*'
+  }})
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-  });
+// io.on('connection', (socket) => {
+//     console.log('a user connected');
+// });
 
-
-initSocket(io)
+ initSocket(io)
 
 let port = process.env.PORT || 3000;
 server.listen(port);

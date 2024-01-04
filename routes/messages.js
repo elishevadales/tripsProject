@@ -7,7 +7,8 @@ const { messagesController } = require("../controllers/messagesController");
 router.get("/", messagesController.routGet)
 
 // Get messages for event
-router.get("/:eventId",  messagesController.byEventId)
+router.get("/byEventId/:eventId", messagesController.byEventId)
 
+router.post('/sedMessage/:eventId', messagesController.sedMessage)
 
 module.exports = router;

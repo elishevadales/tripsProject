@@ -69,7 +69,8 @@ exports.reviewController = {
     eventReviews: async (req, res) => {
         try {
             const eventId = req.params.eventId;
-            const eventReviews = await ReviewModel.find({ event_id: eventId });
+            const eventReviews = await ReviewModel.find({ event_id: eventId })
+            .populate({ path: "user_id", model: "users", select: { _id: 1, nick_name: 1, profile_image: 1 } })
 
             res.json(eventReviews);
         } catch (err) {
