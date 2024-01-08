@@ -11,7 +11,7 @@ exports.messagesController = {
         try {
             const validBody = messageValid(req.body);
             let eventId = req.params.eventId
-            let userId = "6595434dcd091a41e651074f"//req.tokenData._id;
+            let userId = req.tokenData._id;
 
             if (validBody.error) {
                 return res.status(400).json(validBody.error.details);
