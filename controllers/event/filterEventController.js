@@ -43,4 +43,36 @@ exports.filterEventController = {
         }
     },
 
+
+    searchMultiple: async (req, res) => {
+        try {
+            const { name, date_and_time, category, price, parking, accessibility } = req.query;
+
+            // Convert parking and accessibility to boolean
+            const parkingBool = parking === 'true' ? true : false;
+            const accessibilityBool = accessibility === 'true' ? true : false;
+            let parsedDate;
+            if (date_and_time && !isNaN(Date.parse(date_and_time))) {
+                parsedDate = new Date(date_and_time);
+            }
+
+            const data = await EventModel
+                .find({
+                    $or: [
+                        { event_name: new RegExp(name, 'i') },
+                        { date_and_time: parsedDate },
+                        { category: category.toLowerCase() },
+                        // { price: { $lte: price } },
+                    ],
+                    // parking: parkingBool,
+                    accessibility: accessibilityBool,
+                });
+
+            res.json(data);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ msg: 'Internal Server Error' });
+        }
+    }
+
 }

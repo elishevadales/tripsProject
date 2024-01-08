@@ -109,25 +109,6 @@ exports.userController = {
         }
     },
 
-    changeMyInfo: async (req, res) => {
-        let validBody = validInfo(req.body);
-        if (validBody.error) {
-          return res.status(400).json(validBody.error.details);
-        }
-    
-        try {
-          let data = await UserModel.updateOne({ _id: req.tokenData._id },
-            //  { $set: { "name": req.body.name, "img_url": req.body.img_url} }
-            req.body
-          );
-          res.json(data);
-        }
-        catch (err) {
-          console.log(err)
-          res.status(500).json({ msg: "err", err })
-        }
-      },
-
 
       changeMyInfo: async (req, res) => {
         let validBody = validUpdateUserInfo(req.body);

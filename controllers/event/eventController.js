@@ -71,6 +71,41 @@ exports.eventController = {
             res.status(500).json({ msg: "err", err })
         }
     },
+    addOrRemoveLike: async (req, res) => {
+        try {
+            let eventId = req.params.eventId
+            let userId = req.tokenData._id;
+
+            const event = await EventModel.findById(eventId);
+
+            if (!event) {
+                return res.status(404).json({ msg: 'Event not found' });
+            }
+
+            const userLikedEvent = event.like_list.includes(userId);
+
+            if (userLikedEvent) {
+                // return res.status(400).json({ msg: 'Cannot add like twice' });
+                event.like_list = event.like_list.filter(id => id.toString() !== userId);
+                await event.save();
+                await event.populate({ path: "user_id", model: "users" })
+                res.json({ msg: 'Like removed successfully',event });
+            }
+            else {
+                event.like_list.push(userId);
+                await event.save();
+                await event.populate({ path: "user_id", model: "users" })
+
+                res.json({ msg: 'Like added successfully',event });
+            }
+
+
+        }
+        catch (err) {
+            console.log(err)
+            res.status(500).json({ msg: "err", err })
+        }
+    },
 
 
     addLike: async (req, res) => {

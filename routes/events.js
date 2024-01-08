@@ -52,6 +52,9 @@ router.get("/parkingFree", filterEventController.parkingFree)
 router.get("/accessibility", filterEventController.accessibility)
 
 
+//get events by Multiple parameters
+router.get("/searchMultiple", filterEventController.searchMultiple);
+  
 
 // Post an event
 router.post("/", auth, eventController.addEvent)
@@ -61,6 +64,9 @@ router.patch("/setInactive/:eventId", auth, eventController.setInactive)
 
 // Open a closed event (set active to true)
 router.patch("/setActive/:eventId", auth, eventController.setActive)
+
+// Add or remove like
+router.patch("/addOrRemoveLike/:eventId", auth, eventController.addOrRemoveLike)
 
 // Add like
 router.patch("/addLike/:eventId", auth, eventController.addLike)

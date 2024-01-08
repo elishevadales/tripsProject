@@ -35,12 +35,19 @@ exports.validUpdateUserInfo = (_reqBody) => {
   let joiSchema = Joi.object({
     name: Joi.string().min(2).max(50),
     gender: Joi.string().valid('male', 'female', 'other'),
-    age: Joi.number().min(1).max(120),
-    district_address: Joi.string().min(2).max(100),
-    about: Joi.string().min(2).max(1000),
+    age: Joi.number().min(1).max(120).allow(""),
+    district_address: Joi.string().min(2).max(100).allow(""),
+    about: Joi.string().min(2).max(1000).allow(""),
+    nick_name: Joi.string().min(2).max(50).default(Joi.ref('name')),
     profile_image: Joi.string().min(2).max(1000),
     background_image: Joi.string().min(2).max(1000),
-    nick_name: Joi.string().min(2).max(50)
+    
+    
   })
+
+  if (!_reqBody.nick_name || _reqBody.nick_name.trim() === '') {
+    _reqBody.nick_name = _reqBody.name;
+  }
+
   return joiSchema.validate(_reqBody);
 }
