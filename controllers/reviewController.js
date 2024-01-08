@@ -1,6 +1,7 @@
 const { EventModel } = require("../models/eventModel");
 const { ReviewModel } = require("../models/reviewModel");
 const { reviewValid } = require("../validations/reviewValidation")
+const { UserModel } = require("../models/userModel");
 
 
 exports.reviewController = {
@@ -12,6 +13,8 @@ exports.reviewController = {
             let userId = req.tokenData._id;
 
             if (validBody.error) {
+                console.log(validBody.error.details)
+
                 return res.status(400).json(validBody.error.details);
             }
 
@@ -24,22 +27,30 @@ exports.reviewController = {
             // only participants can rate the event
             const participants = event.participants.includes(userId);
 
-            if (!participants) {
-                return res.status(400).json({ msg: 'User is not a participant' });
+            // if (!participants) {
+            //     return res.status(400).json({ msg: 'User is not a participant' });
+            // }
+
+            // const existingReview = await ReviewModel.findOne({ event_id: eventId, user_id: userId });
+
+            // if (existingReview) {
+            //     return res.status(400).json({ msg: 'Cannot rate event twice' });
+            // }
+
+
+            const { nick_name, profile_image } = await UserModel.findById(userId)
+            const review = await ReviewModel.create(req.body);
+            const _id = review.user_id
+            const rev = {
+                ...review._doc, user_id: {
+                    _id,
+                    profile_image,
+                    nick_name
+                }
             }
 
-            const existingReview = await ReviewModel.findOne({ event_id: eventId, user_id: userId });
 
-            if (existingReview) {
-                return res.status(400).json({ msg: 'Cannot rate event twice' });
-            }
-
-            const review = new ReviewModel(req.body);
-            review.event_id = eventId
-            review.user_id = userId
-
-            await review.save();
-            res.json(review);
+            res.json(rev);
 
         } catch (err) {
             console.log(err);
@@ -70,7 +81,7 @@ exports.reviewController = {
         try {
             const eventId = req.params.eventId;
             const eventReviews = await ReviewModel.find({ event_id: eventId })
-            .populate({ path: "user_id", model: "users", select: { _id: 1, nick_name: 1, profile_image: 1 } })
+                .populate({ path: "user_id", model: "users", select: { _id: 1, nick_name: 1, profile_image: 1 } })
 
             res.json(eventReviews);
         } catch (err) {
@@ -83,54 +94,54 @@ exports.reviewController = {
         try {
             const userId = req.tokenData._id;
             const reviewId = req.params.reviewId;
-        
+
             const reviewToDelete = await ReviewModel.findById(reviewId);
-        
+
             if (!reviewToDelete) {
-              return res.status(404).json({ msg: 'Review not found' });
+                return res.status(404).json({ msg: 'Review not found' });
             }
-        
+
             if (reviewToDelete.user_id.toString() !== userId && req.tokenData.role !== "admin") {
-              return res.status(403).json({ msg: 'Unauthorized: You do not have permission to delete this review' });
+                return res.status(403).json({ msg: 'Unauthorized: You do not have permission to delete this review' });
             }
-        
+
             const deletedReview = await ReviewModel.findByIdAndDelete(reviewId);
-        
+
             res.json({ msg: 'Review deleted successfully', deletedReview });
-          } catch (err) {
+        } catch (err) {
             console.error(err);
             res.status(500).json({ msg: 'Internal server error', err });
-          }
+        }
     },
 
     editReview: async (req, res) => {
         try {
             const userId = req.tokenData._id;
             const reviewId = req.params.reviewId;
-        
+
             // Find the review by ID
             const reviewToUpdate = await ReviewModel.findById(reviewId);
-        
+
             // Check if the review exists
             if (!reviewToUpdate) {
-              return res.status(404).json({ msg: 'Review not found' });
+                return res.status(404).json({ msg: 'Review not found' });
             }
-        
+
             if (reviewToUpdate.user_id.toString() !== userId && req.tokenData.role !== "admin") {
-              return res.status(403).json({ msg: 'Unauthorized: You do not have permission to edit this review' });
+                return res.status(403).json({ msg: 'Unauthorized: You do not have permission to edit this review' });
             }
-        
+
             const updatedReview = await ReviewModel.findByIdAndUpdate(
-              reviewId,
-              req.body,
-              { new: true }
+                reviewId,
+                req.body,
+                { new: true }
             );
-        
+
             res.json({ msg: 'Review updated successfully', updatedReview });
-          } catch (err) {
+        } catch (err) {
             console.error(err);
             res.status(500).json({ msg: 'Internal server error', err });
-          }
+        }
     }
 
 }

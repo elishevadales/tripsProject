@@ -56,6 +56,7 @@ let eventSchema = new mongoose.Schema({
     images: [
         {
             type: String,
+            default: ["https://t3.ftcdn.net/jpg/05/63/76/92/360_F_563769202_XvjMvyMO593Wt70Um2OQPJ5CZrTXbT4t.jpg"]
         },
     ],
 
