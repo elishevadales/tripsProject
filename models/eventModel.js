@@ -13,7 +13,10 @@ const priceSchema = new mongoose.Schema({
 let eventSchema = new mongoose.Schema({
 
     event_name: String,
-    category: String,
+    category: {
+        type:String,
+        required: true
+    },
     sub_category: String,
     parking: String,
     district: String,

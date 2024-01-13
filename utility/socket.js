@@ -7,6 +7,18 @@ const initSocket = (io) => {
   io.on("connection", (socket) => {
     console.log("🔥: A user connected");
 
+
+    socket.on("user", (userId) =>{
+      socket.join(userId);
+      console.log(`⚡: User ${socket.id} login to ${userId}`);
+    })
+
+    socket.on("send-notification", (ownerId) => {
+      console.log(`🚀: new notification on ${ownerId}`)
+      io.to(ownerId).emit('new-notification',"new join request");
+
+    })
+
     socket.on("join-room", (roomId) => {
       socket.join(roomId);
       console.log(`⚡: User ${socket.id} joined room ${roomId}`);
@@ -28,15 +40,6 @@ const initSocket = (io) => {
       socket.join(eventId);
 
       try {
-        // const event = await EventModel.findOne({
-        //   _id: eventId,
-        //   'participants.user_id': userId
-        // });
-
-        // if (!event) {
-        //   socket.emit('error', { type: 'EventNotFound', msg: 'Event not found or user not a participant' });
-        //   return;
-        // }
         const { nick_name, profile_image } = await UserModel.findById(messageData.user_id)
         const newMessage = await MessageModel.create(messageData);
         const _id = newMessage.user_id

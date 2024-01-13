@@ -5,4 +5,6 @@ exports.config = {
     passDb:process.env.PASS_DB,
     tokenSecret:process.env.TOKEN_DB,
     admin_token:process.env.ADMIN_TOKEN,
+    email:process.env.EMAIL,
+    email_pass:process.env.EMAIL_PASS,
 }

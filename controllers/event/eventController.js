@@ -2,6 +2,8 @@
 const { EventModel } = require("../../models/eventModel");
 const { UserModel } = require("../../models/userModel");
 const { eventValid } = require("../../validations/eventValidations")
+const { sendEmailInvite } = require("../../utility/transporter")
+const createICalEvent = require('../../helpers/eventHelpers')
 
 exports.eventController = {
     routGet: (req, res) => {
@@ -17,9 +19,10 @@ exports.eventController = {
             }
 
             const event = new EventModel(req.body);
-           
+
             const userId = req.tokenData._id;
             event.user_id = userId;
+            event.participants.push(userId);
             await event.save();
             const eventId = event._id;
 
@@ -89,14 +92,14 @@ exports.eventController = {
                 event.like_list = event.like_list.filter(id => id.toString() !== userId);
                 await event.save();
                 await event.populate({ path: "user_id", model: "users" })
-                res.json({ msg: 'Like removed successfully',event });
+                res.json({ msg: 'Like removed successfully', event });
             }
             else {
                 event.like_list.push(userId);
                 await event.save();
                 await event.populate({ path: "user_id", model: "users" })
 
-                res.json({ msg: 'Like added successfully',event });
+                res.json({ msg: 'Like added successfully', event });
             }
 
 
@@ -182,11 +185,15 @@ exports.eventController = {
                 { new: true }
             );
 
-            await UserModel.findByIdAndUpdate(
-                userId,
-                { $pull: { my_join_events: eventId } },
-                { new: true }
-            );
+            // Send the updeted event to all participants
+            const cal = createICalEvent
+            const participants = updatedEvent.participants
+            let user
+            participants.forEach(async userId => {
+                user = await UserModel.findOne({ _id: userId });
+                sendEmailInvite(user.email, `Update for ${updatedEvent.event_name}`, cal, updatedEvent, user.name)
+            });
+
 
             res.json({ msg: "Event successfully updated", updatedEvent });
         }

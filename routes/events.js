@@ -81,7 +81,7 @@ router.patch("/addJoinRequest/:eventId", auth, joinRequestController.addJoinRequ
 router.patch("/removeJoinRequest/:eventId", auth, joinRequestController.removeJoinRequest)
 
 // Add participant
-router.patch("/addParticipant/:eventId", auth, participantController.addParticipant)
+router.patch("/addParticipant/:eventId/:userId", auth, participantController.addParticipant)
 
 // Remove participant
 router.patch("/removeParticipant/:eventId", auth, participantController.removeParticipant)

@@ -3,7 +3,7 @@ const { createToken } = require("../auth/token");
 const bcrypt = require("bcrypt");
 const { config } = require("../config/secret")
 const { userValid, loginValid, validUpdateUserInfo } = require("../validations/userValidations")
-
+const { EventModel } = require("../models/eventModel");
 
 exports.userController = {
 
@@ -83,7 +83,7 @@ exports.userController = {
             }
 
             if (user.active == false) {
-                return res.status(401).json({ msg: "your account is blocked. Please contact the site administrator", code:3 });
+                return res.status(401).json({ msg: "your account is blocked. Please contact the site administrator", code: 3 });
             }
 
             // create token that includes userID
@@ -93,7 +93,7 @@ exports.userController = {
         catch (err) {
 
             console.log(err)
-            res.status(500).json({ msg: "500 err", err, code:500 })
+            res.status(500).json({ msg: "500 err", err, code: 500 })
         }
     },
 
@@ -110,22 +110,42 @@ exports.userController = {
     },
 
 
-      changeMyInfo: async (req, res) => {
+    changeMyInfo: async (req, res) => {
         let validBody = validUpdateUserInfo(req.body);
         if (validBody.error) {
-          return res.status(400).json(validBody.error.details);
+            return res.status(400).json(validBody.error.details);
         }
-    
+
         try {
-          let data = await UserModel.updateOne({ _id: req.tokenData._id },req.body);
-          res.json(data);
+            let data = await UserModel.updateOne({ _id: req.tokenData._id }, req.body);
+            res.json(data);
         }
         catch (err) {
-          console.log(err)
-          res.status(500).json({ msg: "err", err })
+            console.log(err)
+            res.status(500).json({ msg: "err", err })
+        }
+    },
+
+
+    chackJoinRequest: async (req, res) => {
+        try {
+          let userId = req.tokenData._id;
+          let userInfo = await UserModel.findOne({ _id: userId });
+          let hasRequests = false;
+      
+          for (const eventId of userInfo.my_created_events) {
+            let { join_requests, active } = await EventModel.findOne({ _id: eventId });
+      
+            if (join_requests.length > 0 && active === true) {
+              hasRequests = true;
+            }
+          }
+          res.json(hasRequests);
+        } catch (err) {
+          console.log(err);
+          res.status(500).json({ msg: "err", err });
         }
       },
-
 
     userInfo: async (req, res) => {
         try {
@@ -212,14 +232,14 @@ exports.userController = {
 
             //lll
             if (delId == config.admin_token) {
-                return res.status(401).json({ msg: "You can't delete superAdmin"});
+                return res.status(401).json({ msg: "You can't delete superAdmin" });
 
             }
             if (req.tokenData._id == delId) {
                 return res.status(401).json({ msg: "You can't delete your own acount" });
 
             }
-    
+
 
             let data = await UserModel.deleteOne({ _id: delId });
             res.json(data);

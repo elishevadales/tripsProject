@@ -9,6 +9,9 @@ router.get("/", userController.routGet)
 router.get("/checkToken", auth, userController.checkToken)
 // returns user's information by token
 router.get("/myInfo", auth, userController.myInfo)
+
+router.get("/chackJoinRequest", auth, userController.chackJoinRequest)
+
 // return any user's details
 router.get("/userInfo/:userId", auth, userController.userInfo)
 //get all users
@@ -26,7 +29,7 @@ router.patch("/changeActive/:userID", authAdmin, userController.changeActive)
 // update user's profile (only name or img_url)
 router.put("/changeMyInfo", auth, userController.changeMyInfo)
 //delete user
-router.delete("/:delId",authAdmin , userController.deleteUser)
+router.delete("/:delId", authAdmin, userController.deleteUser)
 
 module.exports = router;
 //end
