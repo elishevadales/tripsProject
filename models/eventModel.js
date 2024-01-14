@@ -17,6 +17,14 @@ let eventSchema = new mongoose.Schema({
     sub_category: String,
     parking: String,
     district: String,
+    coordinates: {
+        lat: {
+            type: Number
+        },
+        long: {
+            type: Number
+        },
+    },
     date_created: {
         type: Date,
         default: Date.now,
