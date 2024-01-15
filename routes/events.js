@@ -18,6 +18,9 @@ router.get("/activeEventList", getEventController.activeEventList)
 // Get all the event list
 router.get("/eventList", getEventController.eventList)
 
+// Get all the event list, but only their: name, address, id, coordinates
+router.get("/eventListLight", getEventController.EventListLight)
+
 //get event by ID
 router.get("/getEventById/:eventId", getEventController.eventById)
 

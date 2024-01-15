@@ -29,8 +29,8 @@ exports.getEventController = {
     eventList: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
-        const sort = req.query.sort || "event_name";
-        const reverse = req.query.reverse == "yes" ? -1 : 1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -47,13 +47,36 @@ exports.getEventController = {
         }
     },
 
+
+    EventListLight: async (req, res) => {
+        const perPage = Math.min(req.query.perPage, 10) || 99;
+        const page = req.query.page || 1;
+        const sort = req.query.sort || "date_created";
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
+
+        try {
+            const data = await EventModel
+                .find({})
+                .select("event_name images address coordinates category date_and_time active _id") // Select only the fields you need
+                .limit(perPage)
+                .skip((page - 1) * perPage)
+                .sort({ [sort]: reverse })
+                .lean(); // Optional: Use lean() to get plain JavaScript objects instead of Mongoose documents
+
+            res.json(data);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: "err", err });
+        }
+    },
+
     //get event by id
     eventById: async (req, res) => {
         try {
             let eventId = req.params.eventId;
             let eventInfo = await EventModel
-            .findOne({ _id: eventId })
-            .populate({ path: "user_id", model: "users" });
+                .findOne({ _id: eventId })
+                .populate({ path: "user_id", model: "users" });
             res.json(eventInfo);
         }
         catch (err) {
@@ -65,8 +88,8 @@ exports.getEventController = {
     eventFree: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
-        const sort = req.query.sort || "event_name";
-        const reverse = req.query.reverse == "yes" ? -1 : 1;
+        const sort = req.query.sort || "date_created";
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
