@@ -2,8 +2,9 @@ const { UserModel } = require("../models/userModel");
 const { createToken } = require("../auth/token");
 const bcrypt = require("bcrypt");
 const { config } = require("../config/secret")
-const { userValid, loginValid, validUpdateUserInfo } = require("../validations/userValidations")
+const { userValid, loginValid, validUpdateUserInfo, resetPasswordValid } = require("../validations/userValidations")
 const { EventModel } = require("../models/eventModel");
+const { sendEmailSignUp, sendPasswordResetEmail } = require("../utility/transporter")
 
 exports.userController = {
 
@@ -14,6 +15,83 @@ exports.userController = {
     checkToken: async (req, res) => {
         res.json(req.tokenData);
     },
+
+    resetPassword: async (req, res) => {
+        const { token } = req.params;
+        const { newPassword } = req.body;
+
+        let valdiateBody = resetPasswordValid(req.body);
+
+        if (valdiateBody.error) {
+            return res.status(400).json(valdiateBody.error.details)
+        }
+        try {
+            const user = await UserModel.findOne({ passwordResetToken: token });
+
+            if (!user) {
+                return res.status(404).json({ message: 'Invalid or expired token' });
+            }
+
+            user.password = newPassword;
+            user.passwordResetToken = undefined;
+            await user.save();
+
+            res.status(200).json({ message: 'Password reset successful' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+    forgotPassword: async (req, res) => {
+        const { email } = req.body;
+        try {
+            const user = await UserModel.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const resetToken = user.generatePasswordResetToken();
+            await user.save();
+
+            const link = `${config.client_url}/resetPassword/${resetToken}`
+           
+            sendPasswordResetEmail(user.email, link);
+
+            res.status(200).json({ message: 'Password reset email sent' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    },
+
+    verify: async (req, res) => {
+        const token = req.params.verToken;
+
+        if (!token) {
+            return res.status(400).json({ msg: 'Token is missing' });
+        }
+        try {
+            const user = await UserModel.findOne({ verificationToken: token });
+
+            if (!user) {
+                return res.status(404).json({ msg: 'User not found' });
+            }
+
+            // Mark the user as verified
+            user.verified = true;
+            user.verificationToken = undefined;
+            await user.save();
+
+            // Redirect to login page or send a response
+            res.redirect(`${config.client_url}/login`);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ msg: 'Internal Server Error' });
+        }
+    },
+
 
     usersList: async (req, res) => {
         let perPage = Math.min(req.query.perPage, 20) || 99;
@@ -46,7 +124,12 @@ exports.userController = {
             let user = new UserModel(req.body);
 
             user.password = await bcrypt.hash(user.password, 10)
+            const token = createToken(user._id, user.role)
+            user.verificationToken = token
             await user.save();
+
+            const verificationLink = `${config.servrt_url}/users/verify/${token}`
+            sendEmailSignUp(user.email, user.name, verificationLink)
 
             user.password = "***";
             res.status(201).json(user)
@@ -80,6 +163,11 @@ exports.userController = {
             let validPassword = await bcrypt.compare(req.body.password, user.password);
             if (!validPassword) {
                 return res.status(401).json({ msg: "Password or email is wrong", code: 2 })
+            }
+
+
+            if (user.verified === false) {
+                return res.status(401).json({ msg: "Not verified", code: 5 });
             }
 
             if (user.active == false) {
@@ -153,12 +241,12 @@ exports.userController = {
         try {
             const userId = req.tokenData._id;
             const userInfo = await UserModel.findOne({ _id: userId });
-    
+
             const events = [];
-    
+
             for (const eventId of userInfo.my_created_events) {
                 const event = await EventModel.findOne({ _id: eventId });
-    
+
                 if (event.join_requests.length > 0) {
                     console.log(event._id.toString())
                     // Get user information for each join request
@@ -174,19 +262,19 @@ exports.userController = {
                             active: 1,
                             role: 1,
                         });
-    
-                    event.join_requests = joinRequests; 
+
+                    event.join_requests = joinRequests;
                     events.push(event);
                 }
             }
-    
+
             res.json({ status: "success", data: events });
         } catch (err) {
             console.error(err);
             res.status(500).json({ status: "error", message: "Internal Server Error" });
         }
     },
-    
+
 
 
 

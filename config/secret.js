@@ -7,4 +7,6 @@ exports.config = {
     admin_token:process.env.ADMIN_TOKEN,
     email:process.env.EMAIL,
     email_pass:process.env.EMAIL_PASS,
+    servrt_url:process.env.SERVRT_URL,
+    client_url:process.env.CLIENT_URL,
 }

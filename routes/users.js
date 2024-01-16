@@ -12,6 +12,9 @@ router.get("/myInfo", auth, userController.myInfo)
 
 router.get("/chackJoinRequest", auth, userController.chackJoinRequest)
 router.get("/getJoinRequest", auth, userController.getJoinRequest)
+router.get('/verify/:verToken', userController.verify)
+router.post('/forgot-password', userController.forgotPassword);
+router.post('/reset-password/:token', userController.resetPassword);
 
 // return any user's details
 router.get("/userInfo/:userId", auth, userController.userInfo)

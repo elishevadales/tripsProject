@@ -5,6 +5,10 @@ const { config } = require("../config/secret")
 
 let userSchema = new mongoose.Schema({
   name: String,
+  verified: { type: Boolean, default: false },
+  verificationToken: { type: String },
+  passwordResetToken: String,
+  passwordResetExpires: Date,
   email: String,
   password: String,
   gender: String,
@@ -75,6 +79,14 @@ let userSchema = new mongoose.Schema({
   ]
 
 })
+
+userSchema.methods.generatePasswordResetToken = function () {
+  const resetToken = crypto.randomBytes(20).toString('hex');
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // Token expires in 10 minutes
+  return resetToken;
+};
+
 
 exports.UserModel = mongoose.model("users", userSchema);
 

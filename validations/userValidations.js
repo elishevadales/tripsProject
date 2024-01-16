@@ -17,7 +17,11 @@ exports.userValid = (_bodyValid) => {
     nick_name: Joi.string().min(2).max(50),
     active: Joi.boolean(),
     role: Joi.string().valid('user', 'admin'),
-    birth_date: Joi.date()
+    birth_date: Joi.date(),
+    verificationToken: Joi.string(),
+    verified: Joi.boolean(),
+    passwordResetToken: Joi.string(),
+    passwordResetExpires: Joi.date(),
   })
   return joiSchema.validate(_bodyValid);
 }
@@ -31,6 +35,15 @@ exports.loginValid = (_bodyValid) => {
   return joiSchema.validate(_bodyValid);
 }
 
+
+exports.resetPasswordValid = (_bodyValid) => {
+  let joiSchema = Joi.object({
+    newPassword: Joi.string().min(6).max(50).required(),
+  })
+  return joiSchema.validate(_bodyValid);
+}
+
+
 //update userInfo validations
 exports.validUpdateUserInfo = (_reqBody) => {
   let joiSchema = Joi.object({
@@ -42,9 +55,9 @@ exports.validUpdateUserInfo = (_reqBody) => {
     nick_name: Joi.string().min(2).max(50).default(Joi.ref('name')),
     profile_image: Joi.string().min(2).max(1000),
     background_image: Joi.string().min(2).max(1000),
-    
+
     birth_date: Joi.date()
-    
+
   })
 
   if (!_reqBody.nick_name || _reqBody.nick_name.trim() === '') {

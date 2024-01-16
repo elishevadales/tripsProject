@@ -31,11 +31,11 @@ const initSocket = (io) => {
       const userId = messageData.user_id;
       const text = messageData.text;
 
-      // if (validBody.error) {
-      //   console.log(`🚀: ${validBody.error.details}`)
-      //   socket.emit('error', { type: 'InvalidMessage', details: validBody.error.details });
-      //   return;
-      // }
+      if (validBody.error) {
+        console.log(`🚀: ${validBody.error.details}`)
+        socket.emit('error', { type: 'InvalidMessage', details: validBody.error.details });
+        return;
+      }
 
       socket.join(eventId);
 
