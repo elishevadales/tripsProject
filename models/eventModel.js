@@ -10,9 +10,14 @@ const priceSchema = new mongoose.Schema({
 
 });
 
+
 let eventSchema = new mongoose.Schema({
 
     event_name: String,
+    address: {
+        type: mongoose.Schema.Types.Mixed,
+        required: true,
+    },
     category: {
         type:String,
         // required: true
@@ -20,6 +25,14 @@ let eventSchema = new mongoose.Schema({
     sub_category: String,
     parking: String,
     district: String,
+    coordinates: {
+        lat: {
+            type: Number
+        },
+        lon: {
+            type: Number
+        },
+    },
     date_created: {
         type: Date,
         default: Date.now,
