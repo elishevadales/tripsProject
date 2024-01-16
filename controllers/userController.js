@@ -129,28 +129,99 @@ exports.userController = {
 
     chackJoinRequest: async (req, res) => {
         try {
-          let userId = req.tokenData._id;
-          let userInfo = await UserModel.findOne({ _id: userId });
-          let hasRequests = false;
-      
-          for (const eventId of userInfo.my_created_events) {
-            let { join_requests, active } = await EventModel.findOne({ _id: eventId });
-      
-            if (join_requests.length > 0 && active === true) {
-              hasRequests = true;
+            let userId = req.tokenData._id;
+            let userInfo = await UserModel.findOne({ _id: userId });
+            let hasRequests = false;
+
+            for (const eventId of userInfo.my_created_events) {
+                let { join_requests, active } = await EventModel.findOne({ _id: eventId });
+
+                if (join_requests.length > 0 && active === true) {
+                    hasRequests = true;
+                }
             }
-          }
-          res.json(hasRequests);
+            res.json(hasRequests);
         } catch (err) {
-          console.log(err);
-          res.status(500).json({ msg: "err", err });
+            console.log(err);
+            res.status(500).json({ msg: "err", err });
         }
-      },
+    },
+
+
+
+    getJoinRequest: async (req, res) => {
+        try {
+            const userId = req.tokenData._id;
+            const userInfo = await UserModel.findOne({ _id: userId });
+    
+            const events = [];
+    
+            for (const eventId of userInfo.my_created_events) {
+                const event = await EventModel.findOne({ _id: eventId });
+    
+                if (event.join_requests.length > 0) {
+                    console.log(event._id.toString())
+                    // Get user information for each join request
+                    const joinRequests = await UserModel.find({ _id: { $in: event.join_requests } })
+                        .select({
+                            _id: 1,
+                            nick_name: 1,
+                            profile_image: 1,
+                            about: 1,
+                            gender: 1,
+                            age: 1,
+                            district_address: 1,
+                            active: 1,
+                            role: 1,
+                        });
+    
+                    event.join_requests = joinRequests; 
+                    events.push(event);
+                }
+            }
+    
+            res.json({ status: "success", data: events });
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ status: "error", message: "Internal Server Error" });
+        }
+    },
+    
+
+
 
     userInfo: async (req, res) => {
         try {
             let userId = req.params.userId;
-            let userInfo = await UserModel.findOne({ _id: userId }, { password: 0 });
+            let userInfo = await UserModel.findOne({ _id: userId }, { password: 0 })
+                .populate({
+                    path: "my_created_events",
+                    model: "events",
+                    select: {
+                        _id: 1,
+                        event_name: 1,
+                        images: 1,
+                        like_list: 1,
+                        participants: 1,
+                        date_and_time: 1,
+                        date_created: 1,
+                        active: 1,
+                    },
+                })
+                .populate({
+                    path: "my_join_events",
+                    model: "events",
+                    select: {
+                        _id: 1,
+                        event_name: 1,
+                        images: 1,
+                        like_list: 1,
+                        participants: 1,
+                        date_and_time: 1,
+                        date_created: 1,
+                        active: 1,
+                    },
+                })
             res.json(userInfo);
         }
         catch (err) {

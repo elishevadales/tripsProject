@@ -78,7 +78,7 @@ router.patch("/removeLike/:eventId", auth, eventController.removeLike)
 router.patch("/addJoinRequest/:eventId", auth, joinRequestController.addJoinRequest)
 
 // Remove join request
-router.patch("/removeJoinRequest/:eventId", auth, joinRequestController.removeJoinRequest)
+router.patch("/removeJoinRequest/:eventId/:userToRemove", auth, joinRequestController.removeJoinRequest)
 
 // Add participant
 router.patch("/addParticipant/:eventId/:userId", auth, participantController.addParticipant)

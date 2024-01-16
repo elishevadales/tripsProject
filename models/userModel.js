@@ -12,7 +12,23 @@ let userSchema = new mongoose.Schema({
     type: Date,
     default: () => Date.now() + (3 * 60 * 60 * 1000)
   },
-  age: Number,
+  birth_date: {
+    type: Date,
+    default: () => Date.now() + (3 * 60 * 60 * 1000)
+  },
+  age: {
+    type: Number,
+    default: function () {
+      const birthDate = new Date(this.birth_date);
+      const currentDate = new Date();
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      if (currentDate.getMonth() < birthDate.getMonth() || (currentDate.getMonth() === birthDate.getMonth() && currentDate.getDate() < birthDate.getDate())) {
+        return age - 1;
+      }
+
+      return age;
+    }
+  },
   district_address: String,
   about: String,
   profile_image: {

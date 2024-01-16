@@ -11,6 +11,7 @@ router.get("/checkToken", auth, userController.checkToken)
 router.get("/myInfo", auth, userController.myInfo)
 
 router.get("/chackJoinRequest", auth, userController.chackJoinRequest)
+router.get("/getJoinRequest", auth, userController.getJoinRequest)
 
 // return any user's details
 router.get("/userInfo/:userId", auth, userController.userInfo)

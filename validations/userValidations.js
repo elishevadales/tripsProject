@@ -17,6 +17,7 @@ exports.userValid = (_bodyValid) => {
     nick_name: Joi.string().min(2).max(50),
     active: Joi.boolean(),
     role: Joi.string().valid('user', 'admin'),
+    birth_date: Joi.date()
   })
   return joiSchema.validate(_bodyValid);
 }
@@ -42,6 +43,7 @@ exports.validUpdateUserInfo = (_reqBody) => {
     profile_image: Joi.string().min(2).max(1000),
     background_image: Joi.string().min(2).max(1000),
     
+    birth_date: Joi.date()
     
   })
 

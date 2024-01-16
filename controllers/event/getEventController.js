@@ -13,7 +13,35 @@ exports.getEventController = {
         try {
             const data = await EventModel
                 .find({ active: true })
-                .populate({ path: "user_id", model: "users" })
+                .populate({
+                    path: "user_id", model: "users", select: {
+                        _id: 1, nick_name: 1, profile_image: 1, background_image
+                            : 1, gender: 1
+                    }
+                })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
                 .limit(perPage)
                 .skip((page - 1) * perPage)
                 .sort({ [sort]: reverse })
@@ -35,7 +63,29 @@ exports.getEventController = {
         try {
             const data = await EventModel
                 .find({})
-                .populate({ path: "user_id", model: "users" })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
                 .limit(perPage)
                 .skip((page - 1) * perPage)
                 .sort({ [sort]: reverse })
@@ -52,15 +102,50 @@ exports.getEventController = {
         try {
             let eventId = req.params.eventId;
             let eventInfo = await EventModel
-            .findOne({ _id: eventId })
-            .populate({ path: "user_id", model: "users" });
+                .findOne({ _id: eventId })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "join_requests",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                });
+    
             res.json(eventInfo);
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).json({ msg: "err", err })
+        } catch (err) {
+            console.log(err);
+            res.status(500).json({ msg: "err", err });
         }
     },
+    
 
     eventFree: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
@@ -71,7 +156,41 @@ exports.getEventController = {
         try {
             const data = await EventModel
                 .find({ "price.free": true, active: true })
-                .populate({ path: "user_id", model: "users" })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "join_requests",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
                 .limit(perPage)
                 .skip((page - 1) * perPage)
                 .sort({ [sort]: reverse })

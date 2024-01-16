@@ -34,6 +34,7 @@ exports.joinRequestController = {
     removeJoinRequest: async (req, res) => {
         try {
             let eventId = req.params.eventId
+            let userToRemove = req.params.userToRemove
             let userId = req.tokenData._id;
 
             const event = await EventModel.findById(eventId);
@@ -42,13 +43,13 @@ exports.joinRequestController = {
                 return res.status(404).json({ msg: 'Event not found' });
             }
 
-            const joinRequests = event.join_requests.includes(userId);
+            const joinRequests = event.join_requests.includes(userToRemove);
 
             if (!joinRequests) {
                 return res.status(404).json({ msg: 'Join request not found' });
             }
 
-            event.join_requests = event.join_requests.filter(id => id.toString() !== userId);
+            event.join_requests = event.join_requests.filter(id => id.toString() !== userToRemove);
             await event.save();
             res.json({ msg: 'Join request removed successfully' });
         }

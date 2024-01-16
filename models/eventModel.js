@@ -15,7 +15,7 @@ let eventSchema = new mongoose.Schema({
     event_name: String,
     category: {
         type:String,
-        required: true
+        // required: true
     },
     sub_category: String,
     parking: String,

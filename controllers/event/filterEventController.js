@@ -12,6 +12,29 @@ exports.filterEventController = {
         try {
             const data = await EventModel
                 .find({ parking: true, active: true })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
                 .limit(perPage)
                 .skip((page - 1) * perPage)
                 .sort({ [sort]: reverse })
@@ -32,6 +55,29 @@ exports.filterEventController = {
         try {
             const data = await EventModel
                 .find({ accessibility: true, active: true })
+                .populate({
+                    path: "user_id",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,active:1, role:1
+                    },
+                })
+                .populate({
+                    path: "participants",
+                    model: "users",
+                    select: {
+                        _id: 1,
+                        nick_name: 1,
+                        profile_image: 1,
+                        background_image: 1,
+                        gender: 1,
+                        active:1, role:1
+                    },
+                })
                 .limit(perPage)
                 .skip((page - 1) * perPage)
                 .sort({ [sort]: reverse })
