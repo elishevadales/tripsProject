@@ -71,7 +71,7 @@ exports.getEventController = {
                         nick_name: 1,
                         profile_image: 1,
                         background_image: 1,
-                        gender: 1,active:1, role:1
+                        gender: 1,active:1, role:1, age:1
                     },
                 })
                 .populate({
@@ -83,7 +83,7 @@ exports.getEventController = {
                         profile_image: 1,
                         background_image: 1,
                         gender: 1,
-                        active:1, role:1
+                        active:1, role:1, age:1
                     },
                 })
                 .limit(perPage)
@@ -134,7 +134,7 @@ exports.getEventController = {
                         nick_name: 1,
                         profile_image: 1,
                         background_image: 1,
-                        gender: 1,active:1, role:1
+                        gender: 1,active:1, role:1, age:1
                     },
                 })
                 .populate({
@@ -146,7 +146,7 @@ exports.getEventController = {
                         profile_image: 1,
                         background_image: 1,
                         gender: 1,
-                        active:1, role:1
+                        active:1, role:1, age:1
                     },
                 })
                 .populate({
@@ -158,7 +158,7 @@ exports.getEventController = {
                         profile_image: 1,
                         background_image: 1,
                         gender: 1,
-                        active:1, role:1
+                        active:1, role:1, age:1
                     },
                 });
     
