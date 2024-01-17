@@ -13,7 +13,8 @@
 
         .invitation-container {
             width: 80%;
-            height: 70vh;
+            min-width: 500px;
+            height: 450px;
             background-image: url('%IMAGE_URL%');
             /* background-image: url('https://images.unsplash.com/photo-1503756234508-e32369269deb?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fHNlYSUyMGJlYWNofGVufDB8fDB8fHww'); */
             background-size: cover;
@@ -28,7 +29,7 @@
 
         .invitation-content {
             padding: 50px;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.6);
             border-radius: 10px 0px 0px 10px;
             direction: rtl; /* Set the text direction to right-to-left */
             display: block;
@@ -54,7 +55,7 @@
         a {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #077f7b00;
+            background-color: #077F7A;
             text-decoration: none;
             font-size: 20px;
             border-radius: 5px;
@@ -73,7 +74,7 @@
             <p>%EVENT_LOCATION%</p>
             <p>%EVENT_INFO%</p>
 
-            <a href="#">Visit</a>
+            <a href='%CLIENT_URL%'>Visit</a>
         </div>
     </div>
 </body>

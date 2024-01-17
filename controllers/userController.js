@@ -18,7 +18,8 @@ exports.userController = {
 
     resetPassword: async (req, res) => {
         const { token } = req.params;
-        const { newPassword } = req.body;
+        const { password } = req.body;
+console.log("token",token)
 
         let valdiateBody = resetPasswordValid(req.body);
 
@@ -29,10 +30,9 @@ exports.userController = {
             const user = await UserModel.findOne({ passwordResetToken: token });
 
             if (!user) {
-                return res.status(404).json({ message: 'Invalid or expired token' });
+                return res.status(401).json({ message: 'Invalid or expired token', code: 1 });
             }
-
-            user.password = newPassword;
+            user.password = await bcrypt.hash(password, 10)
             user.passwordResetToken = undefined;
             await user.save();
 
@@ -49,11 +49,12 @@ exports.userController = {
             const user = await UserModel.findOne({ email });
 
             if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(401).json({ message: 'Email not found', code: 1 })
             }
 
             const resetToken = user.generatePasswordResetToken();
             await user.save();
+            console.log("resetToken",resetToken)
 
             const link = `${config.client_url}/resetPassword/${resetToken}`
            

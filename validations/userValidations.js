@@ -38,7 +38,7 @@ exports.loginValid = (_bodyValid) => {
 
 exports.resetPasswordValid = (_bodyValid) => {
   let joiSchema = Joi.object({
-    newPassword: Joi.string().min(6).max(50).required(),
+    password: Joi.string().min(6).max(50).required(),
   })
   return joiSchema.validate(_bodyValid);
 }

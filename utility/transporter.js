@@ -14,6 +14,7 @@ exports.sendEmailInvite = async (sendto, subject, calendarObj = null, event, nam
     const fs = require('fs');
     let htmlContent = fs.readFileSync('utility/invite.html', 'utf8');
     htmlContent = htmlContent.replace('%EVENT_NAME%', event.event_name);
+    htmlContent = htmlContent.replace('%CLIENT_URL%', config.client_url);
     htmlContent = htmlContent.replace('%USER_NAME%', name);
     htmlContent = htmlContent.replace('%EVENT_INFO%', event.trip_details ? event.trip_details : "");
     htmlContent = htmlContent.replace('%EVENT_LOCATION%', event.place_info);
@@ -24,6 +25,7 @@ exports.sendEmailInvite = async (sendto, subject, calendarObj = null, event, nam
         minute: '2-digit',
     }));
     mailOptions = {
+        from:'Trip With Me 💌 <foo@blurdybloop.com>',
         to: sendto,
         subject: subject,
         html: htmlContent,
@@ -56,13 +58,13 @@ exports.sendEmailInvite = async (sendto, subject, calendarObj = null, event, nam
         }
     })
 }
-
 exports.sendPasswordResetEmail= async (sendto, tokenUrl) => {
     const fs = require('fs');
     console.log("tokenUrl",tokenUrl)
     let htmlContent = fs.readFileSync('utility/resetPassword.html', 'utf8');
     htmlContent = htmlContent.replace('%VERIFICATION_LINK%', tokenUrl);
     mailOptions = {
+        from:'Trip With Me 🗝️ <foo@blurdybloop.com>',
         to: sendto,
         subject: "איפוס סיסמא",
         html: htmlContent,
@@ -84,8 +86,9 @@ exports.sendEmailSignUp = async (sendto, name, tokenUrl) => {
     htmlContent = htmlContent.replace('%VERIFICATION_LINK%', tokenUrl);
     htmlContent = htmlContent.replace('%USER_NAME%', name);
     mailOptions = {
+        from:'Trip With Me 👥 <foo@blurdybloop.com>',
         to: sendto,
-        subject: "אשר הרשמה",
+        subject: "אישור הרשמה",
         html: htmlContent,
     }
 

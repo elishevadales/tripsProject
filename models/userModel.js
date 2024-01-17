@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Joi = require("joi")
 const jwt = require("jsonwebtoken");
 const { config } = require("../config/secret")
+const crypto = require('crypto');
 
 let userSchema = new mongoose.Schema({
   name: String,
@@ -82,7 +83,7 @@ let userSchema = new mongoose.Schema({
 
 userSchema.methods.generatePasswordResetToken = function () {
   const resetToken = crypto.randomBytes(20).toString('hex');
-  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetToken = resetToken
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // Token expires in 10 minutes
   return resetToken;
 };
