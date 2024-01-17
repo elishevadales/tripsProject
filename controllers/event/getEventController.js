@@ -7,8 +7,8 @@ exports.getEventController = {
     activeEventList: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
-        const sort = req.query.sort || "event_name";
-        const reverse = req.query.reverse == "yes" ? -1 : 1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -58,7 +58,7 @@ exports.getEventController = {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
         const sort = req.query.sort || "date_created";;
-        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -102,7 +102,7 @@ exports.getEventController = {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
         const sort = req.query.sort || "date_created";
-        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -174,7 +174,7 @@ exports.getEventController = {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
         const sort = req.query.sort || "date_created";
-        const reverse = sort === "date_created" ? -1 : (req.query.reverse === "yes" ? -1 : 1);
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel

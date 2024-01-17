@@ -5,8 +5,8 @@ exports.searchEventController = {
     searchByName: async (req, res) => {
         let perPage = req.query.perPage || 3;
         let page = req.query.page || 1;
-        let sort = req.query.sort || "date_created";
-        let reverse = req.query.reverse == "yes" ? 1 : -1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
         try {
             let queryS = req.query.search;
             let searchReg = new RegExp(queryS, "i")
@@ -28,8 +28,8 @@ exports.searchEventController = {
     searchByDistricts: async (req, res) => {
         let perPage = req.query.perPage || 3;
         let page = req.query.page || 1;
-        let sort = req.query.sort || "date_created";
-        let reverse = req.query.reverse == "yes" ? 1 : -1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
         try {
             let queryS = req.query.search;
             console.log(queryS)
@@ -54,6 +54,7 @@ exports.searchEventController = {
     serchByPrice: async (req, res) => {
         const perPage = req.query.perPage || 10;
         const page = req.query.page || 1;
+        
         try {
             const minPrice = req.query.minPrice || 0;
             const maxPrice = req.query.maxPrice || Number.MAX_SAFE_INTEGER;
@@ -76,8 +77,9 @@ exports.searchEventController = {
     searchByCategory: async (req, res) => {
         let perPage = req.query.perPage || 3;
         let page = req.query.page || 1;
-        let sort = req.query.sort || "date_created";
-        let reverse = req.query.reverse == "yes" ? 1 : -1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
+
         try {
             let queryS = req.query.search;
             let searchReg = new RegExp(queryS, "i")
@@ -100,8 +102,9 @@ exports.searchEventController = {
     searchBySubCategory: async (req, res) => {
         let perPage = req.query.perPage || 3;
         let page = req.query.page || 1;
-        let sort = req.query.sort || "date_created";
-        let reverse = req.query.reverse == "yes" ? 1 : -1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
+
         try {
             let queryS = req.query.search;
             let categories = queryS.split(',');
@@ -122,10 +125,11 @@ exports.searchEventController = {
         }
     },
 
-    
+
     searchByDates: async (req, res) => {
         const perPage = req.query.perPage || 10;
         const page = req.query.page || 1;
+    
 
         try {
             const startDate = req.query.startDate || new Date();
@@ -149,6 +153,8 @@ exports.searchEventController = {
     search: async (req, res) => {
         const perPage = req.query.perPage || 10;
         const page = req.query.page || 1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const queryS = req.query.search || "";
@@ -157,9 +163,6 @@ exports.searchEventController = {
 
             textSearch = textSearch.map(text => text.trim());
             let textSearchArray = textSearch.map(text => new RegExp(text, "i"));
-
-            const sort = req.query.sort || "event_name";
-            const reverse = req.query.reverse == "yes" ? -1 : 1;
 
             let eventSearch = await EventModel.find({
                 $or: [

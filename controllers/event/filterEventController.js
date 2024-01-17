@@ -6,8 +6,8 @@ exports.filterEventController = {
     parkingFree: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
-        const sort = req.query.sort || "event_name";
-        const reverse = req.query.reverse == "yes" ? -1 : 1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -20,7 +20,7 @@ exports.filterEventController = {
                         nick_name: 1,
                         profile_image: 1,
                         background_image: 1,
-                        gender: 1,active:1, role:1
+                        gender: 1, active: 1, role: 1
                     },
                 })
                 .populate({
@@ -32,7 +32,7 @@ exports.filterEventController = {
                         profile_image: 1,
                         background_image: 1,
                         gender: 1,
-                        active:1, role:1
+                        active: 1, role: 1
                     },
                 })
                 .limit(perPage)
@@ -49,8 +49,8 @@ exports.filterEventController = {
     accessibility: async (req, res) => {
         const perPage = Math.min(req.query.perPage, 10) || 99;
         const page = req.query.page || 1;
-        const sort = req.query.sort || "event_name";
-        const reverse = req.query.reverse == "yes" ? -1 : 1;
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
 
         try {
             const data = await EventModel
@@ -63,7 +63,7 @@ exports.filterEventController = {
                         nick_name: 1,
                         profile_image: 1,
                         background_image: 1,
-                        gender: 1,active:1, role:1
+                        gender: 1, active: 1, role: 1
                     },
                 })
                 .populate({
@@ -75,7 +75,7 @@ exports.filterEventController = {
                         profile_image: 1,
                         background_image: 1,
                         gender: 1,
-                        active:1, role:1
+                        active: 1, role: 1
                     },
                 })
                 .limit(perPage)
@@ -91,13 +91,19 @@ exports.filterEventController = {
 
 
     searchMultiple: async (req, res) => {
+
+        const sort = req.query.sort || "date_created";;
+        const reverse = sort === "date_created" ? -1 : (req.query.reverse == "yes" ? -1 : 1);
+
         try {
+
             const { name, date_and_time, category, price, parking, accessibility } = req.query;
 
             // Convert parking and accessibility to boolean
             const parkingBool = parking === 'true' ? true : false;
             const accessibilityBool = accessibility === 'true' ? true : false;
             let parsedDate;
+
             if (date_and_time && !isNaN(Date.parse(date_and_time))) {
                 parsedDate = new Date(date_and_time);
             }
@@ -108,11 +114,11 @@ exports.filterEventController = {
                         { event_name: new RegExp(name, 'i') },
                         { date_and_time: parsedDate },
                         { category: category.toLowerCase() },
-                        // { price: { $lte: price } },
                     ],
                     // parking: parkingBool,
                     accessibility: accessibilityBool,
-                });
+                })
+                .sort({ [sort]: reverse });
 
             res.json(data);
         } catch (err) {
