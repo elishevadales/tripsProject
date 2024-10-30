@@ -2,8 +2,7 @@ const nodemailer = require('nodemailer');
 const { config } = require('../config/secret');
 
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    secure: true,
+    service: 'gmail', // or your email service
     auth: {
         user: config.email,
         pass: config.email_pass
@@ -25,7 +24,7 @@ exports.sendEmailInvite = async (sendto, subject, calendarObj = null, event, nam
         minute: '2-digit',
     }));
     mailOptions = {
-        from:'Trip With Me 💌 <foo@blurdybloop.com>',
+        from:config.email,
         to: sendto,
         subject: subject,
         html: htmlContent,
@@ -81,22 +80,21 @@ exports.sendPasswordResetEmail= async (sendto, tokenUrl) => {
 
 exports.sendEmailSignUp = async (sendto, name, tokenUrl) => {
     const fs = require('fs');
-    console.log("tokenUrl",tokenUrl)
     let htmlContent = fs.readFileSync('utility/signUp.html', 'utf8');
     htmlContent = htmlContent.replace('%VERIFICATION_LINK%', tokenUrl);
     htmlContent = htmlContent.replace('%USER_NAME%', name);
-    mailOptions = {
-        from:'Trip With Me 👥 <foo@blurdybloop.com>',
+
+    const mailOptions = {
+        from: 'Trip With Me 👥 <foo@blurdybloop.com>',
         to: sendto,
         subject: "אישור הרשמה",
         html: htmlContent,
-    }
+    };
 
-    transporter.sendMail(mailOptions, function (error, response) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log("Message sent: ", response);
-        }
-    })
-}
+    try {
+        await transporter.sendMail(mailOptions);
+        console.log("Email sent successfully");
+    } catch (error) {
+        console.error("Error sending email: ", error);
+    }
+};
