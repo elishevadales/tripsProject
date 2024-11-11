@@ -71,12 +71,6 @@ router.patch("/setActive/:eventId", auth, eventController.setActive)
 // Add or remove like
 router.patch("/addOrRemoveLike/:eventId", auth, eventController.addOrRemoveLike)
 
-// Add like
-router.patch("/addLike/:eventId", auth, eventController.addLike)
-
-// Remove  like
-router.patch("/removeLike/:eventId", auth, eventController.removeLike)
-
 // Add join request
 router.patch("/addJoinRequest/:eventId", auth, joinRequestController.addJoinRequest)
 

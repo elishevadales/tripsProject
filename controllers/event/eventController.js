@@ -110,62 +110,6 @@ exports.eventController = {
         }
     },
 
-
-    addLike: async (req, res) => {
-        try {
-            let eventId = req.params.eventId
-            let userId = req.tokenData._id;
-
-            const event = await EventModel.findById(eventId);
-
-            if (!event) {
-                return res.status(404).json({ msg: 'Event not found' });
-            }
-
-            const userLikedEvent = event.like_list.includes(userId);
-
-            if (userLikedEvent) {
-                return res.status(400).json({ msg: 'Cannot add like twice' });
-            }
-
-            event.like_list.push(userId);
-            await event.save();
-
-            res.json({ msg: 'Like added successfully' });
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).json({ msg: "err", err })
-        }
-    },
-
-    removeLike: async (req, res) => {
-        try {
-            let eventId = req.params.eventId
-            let userId = req.tokenData._id;
-
-            const event = await EventModel.findById(eventId);
-
-            if (!event) {
-                return res.status(404).json({ msg: 'Event not found' });
-            }
-
-            const userLikedEvent = event.like_list.includes(userId);
-
-            if (!userLikedEvent) {
-                return res.status(400).json({ msg: 'User has not liked this event' });
-            }
-
-            event.like_list = event.like_list.filter(id => id.toString() !== userId);
-            await event.save();
-            res.json({ msg: 'Like removed successfully' });
-        }
-        catch (err) {
-            console.log(err)
-            res.status(500).json({ msg: "err", err })
-        }
-    },
-
     editEvent: async (req, res) => {
         const validBody = eventValid(req.body);
         if (validBody.error) {
