@@ -43,9 +43,9 @@ exports.joinRequestController = {
                 return res.status(404).json({ msg: 'Event not found' });
             }
 
-            const joinRequests = event.join_requests.includes(userToRemove);
+            const joinRequestExists = event.join_requests.some(id => id.toString() === userToRemove);
 
-            if (!joinRequests) {
+            if (!joinRequestExists) {
                 return res.status(404).json({ msg: 'Join request not found' });
             }
 
@@ -55,7 +55,7 @@ exports.joinRequestController = {
         }
         catch (err) {
             console.log(err)
-            res.status(500).json({ msg: "err", err })
+            res.status(500).json({ msg: "Internal Server Error", error: err.message });
         }
     },
 
